@@ -3,7 +3,11 @@ This repository contains the data and code required to reproduce the results pre
 
 __A benchmark of traditional visual descriptors and convolutional networks 'off-the-shelf' for anomaly detection__, to be submitted to the International Joint Conference on Mechanics, Design Engineering and Advanced Manufacturing ([JCM 2022](https://www.associazioneadm.it/jcm2022/index.php), June 01-03, 2022 - Ischia, Italy)
 
+## Usage
+_Under construction_
+
 ## Dependencies
+_Under construction_
 
 ## Credits
 - Datasets 'Paper-1', 'Paper-2' and 'Paper-2' sourced from [PIPED: Paper ImPuritiEs Dataset](https://github.com/bianconif/PIPED)
