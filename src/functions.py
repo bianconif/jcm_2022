@@ -1,3 +1,4 @@
+from math import comb
 import os
 import pandas as pd
 
@@ -5,6 +6,81 @@ import numpy as np
 
 from cenotaph.basics.base_classes import Image
 from cenotaph.basics.generic_functions import get_files_in_folder, get_folders
+
+def _shuffle(x):
+    """Shuffle returning a copy"""
+    a = np.copy(x)
+    np.random.shuffle(a)
+    return a
+
+class SplitsGenerator():
+    """Define train/test splits for accuracy estimation"""
+    
+    def __init__(self, normal_label='Normal'):
+        """
+        
+        Parameters
+        ----------
+        normal_label: str
+            The label that identifies a pattern as 'normal'
+        """
+        self._normal_label = normal_label
+        
+    def _generate_splits(self, labels, train_ratio, num_splits):
+        
+        """
+        Parameters
+        ----------
+        labels: ndarray of str
+            The label of each pattern in the dataset.
+        train_ratio: float [0,1]
+            The fraction of normal samples used to train the classifier
+        num_splits: int
+            The total number of splits
+            
+        Returns
+        -------
+        train_indices: nparray of int (x,num_splits)
+            Indices of the patterns used for train, where 
+            x = floor(train_ratio * number of normal samples)  
+        """
+        
+        #Indices of the normal cases
+        normal_indices = np.argwhere(labels == self._normal_label)
+        
+        #Total number of normal cases
+        total_normal = len(normal_indices)
+        
+        #Number of train samples
+        num_train_samples = np.floor(total_normal * train_ratio).astype(np.int)
+        
+        #Upper bound to the number of splits (number of subsets with 
+        #train_number elements from a set with total_normal elements)
+        max_allowed_splits = comb(total_normal, num_train_samples)
+        if num_splits > max_allowed_splits:
+            raise Exception('Not enough train samples for the requested number of splits')
+        
+        #Generate the splits
+        train_indices = _shuffle(normal_indices)
+        train_indices = train_indices[0:num_train_samples]
+        while train_indices.shape[1] < num_splits:
+            
+            #Generate a tentative random permutation
+            tentative_train_indices = _shuffle(normal_indices)[0:num_train_samples]
+            
+            #Make sure the permutation is different than those already stored
+            already_present = False
+            for i in range(train_indices.shape[1]):
+                if np.sum(tentative_train_indices - train_indices[:,i]) == 0:
+                    already_present = True
+                    break
+            if not already_present:
+                train_indices = np.hstack((train_indices, 
+                                           tentative_train_indices))
+            
+        
+        return train_indices
+        
 
 class FeatureCalculator():
     
