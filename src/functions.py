@@ -13,21 +13,188 @@ def _shuffle(x):
     np.random.shuffle(a)
     return a
 
+def get_accuracy(descriptor, descriptor_name, classifier, classifier_name,
+                 dataset_folder, dataset_name, feature_cache, 
+                 classification_cache, splits_cache, train_ratio, num_splits):
+    """Read/estimate the accuracy of a combination feature/classifier on a 
+    given dataset
+    
+    Parameters
+    ----------
+    descriptor: cenotaph.basics.base_classes.ImageDescriptor
+        The image descriptor.
+    descriptor_name: str
+        The name used to identify this descriptor
+    classifier: cenotaph.classification.one_class.OneClassClassifier
+        The one-class classifier.
+    classifier_name: str
+        The name used to identify the classifier
+    dataset_folder: str
+        Path to the dataset folder. See FeatureCalculator documentation for
+        the folder structure.
+    dataset_name: str
+        The name used to identify the dataset.
+    feature_cache: str
+        Path to the folder where the features are cached.
+    classification_cache: str
+        Path to the folder where the classification results are cached.
+    splits_cache: str
+        Path to the folder where the splits are cached
+    train_ratio: float [0,1]
+        The fraction of normal samples used to train the classifier.
+    num_splits: int
+        The number of train/test splits
+    
+    Returns
+    -------
+    accuracy: nparray of float (num_splits)
+        The accuracy for each split.
+    """
+    
+    accuracy = np.empty((0,0), dtype=np.float)
+    
+    #Check if the results are already stored; if so then read them, otherwise
+    #compute
+    source = f'{classification_cache}/{dataset_name}--{descriptor_name}--{classifier_name}.csv'
+    try:
+        df = pd.read_csv(source)
+    except FileNotFoundError:
+            
+        splits_generator = SplitsGenerator(cache = f'{splits_cache}/{dataset_name}.csv')
+        
+        print(f'Computing {descriptor_name}/{classifier_name} on {dataset_name}')
+
+        #Compute/read the features and the labels
+        cache = f'{feature_cache}/{dataset_name}--{descriptor_name}.csv'
+        feature_calculator = FeatureCalculator(descriptor, dataset_folder,
+                                               cache = cache)
+        features, labels = feature_calculator.get_features()
+
+        #--------- Generate/read the splits for accuracy estimation ---------
+
+        #Generate/read the train indices
+        train_indices = splits_generator.get_train_indices(
+            labels, train_ratio, num_splits)
+
+
+        #--------------------------------------------------------------------
+
+        #---------- Estimate the accuracy for each split --------------------
+        for s in range(train_indices.shape[1]):
+            train_indices_s = train_indices[:,s]
+            
+            #Obtain the test indices by difference
+            test_indices_s = set(range(len(labels))) - set(train_indices_s)
+            test_indices_s = np.array(list(test_indices_s), dtype=np.int)            
+            
+            #Train the classifier
+            classifier.train(positive_patterns = features[train_indices_s,:])
+            
+            #Predict the response and compute the accuracy
+            target_labels = labels[test_indices_s]
+            predicted_labels = classifier.predict(features[test_indices_s,:])
+            acc = np.sum(target_labels == predicted_labels)/len(target_labels)
+            accuracy.append(acc)
+
+        #--------------------------------------------------------------------
+        
+        #Save the results
+        df = pd.DataFrame(data = accuracy)
+        df.to_csv(source, index = False)
+        
+    return accuracy
+
 class SplitsGenerator():
     """Define train/test splits for accuracy estimation"""
     
-    def __init__(self, normal_label='Normal'):
+    def __init__(self, normal_label='Normal', **kwargs):
         """
         
         Parameters
         ----------
         normal_label: str
             The label that identifies a pattern as 'normal'
+        cache: str (optional)
+            The cache where the splits are to be stored. If given the splits
+            are cached in the given file and not recomputed. Use this option
+            to freeze the splits and obtain reproducible results.
         """
         self._normal_label = normal_label
+        if 'cache' in kwargs.keys():
+            self._cache = kwargs['cache']
+            
+    def get_train_indices(self, labels, train_ratio, num_splits):
+        """
+        Parameters
+        ----------
+        labels: ndarray of str
+            The label of each pattern in the dataset.
+        train_ratio: float [0,1]
+            The fraction of normal samples used to train the classifier
+        num_splits: int
+            The total number of splits
+            
+        Returns
+        -------
+        train_indices: nparray of int (x,num_splits)
+            Indices of the patterns used for train, where 
+            x = floor(train_ratio * number of normal samples)  
+        """
         
-    def _generate_splits(self, labels, train_ratio, num_splits):
+        try:
+            cache = self._cache
+            try:
+                #If caching requested try and read the file
+                train_indices = self._read_train_indices(self._cache)
+            except FileNotFoundError:
+                #If the cache file doesn't exist then compute and store the
+                #splits
+                train_indices = self._generate_splits(
+                    labels, train_ratio, num_splits)
+                self._save_train_indices(train_indices, self._cache)
+        except AttributeError:
+            #If caching not requested just compute the features without
+            #storing them
+            train_indices = self._generate_splits(
+                labels, train_ratio, num_splits)
+            
+        return train_indices
+    
+    def _read_train_indices(self, source):
+        """Read the train indices from csv file
         
+        Parameters
+        ----------
+        source: str 
+            Pointer to the csv file where the train indices are stored
+
+        Returns
+        -------
+        train_indices: nparray of int (N,D)
+            The train indices; where N is the total number of train samples and D
+            the number of splits (each column represents one split into
+            train and test set).
+        """
+        
+        df = pd.read_csv(source)
+        train_indices = df.to_numpy()
+        
+        return train_indices        
+        
+    def _save_train_indices(self, train_indices, destination):
+        """Save the train indices into a csv file
+        
+        Parameters
+        ----------
+        train_indices: nparray of int (see self._generate_splits)
+        destination: str
+            The csv file where the train indices are to be stored.
+        """
+        
+        df = pd.DataFrame(train_indices)
+        df.to_csv(destination, index = False)    
+        
+    def _generate_splits(self, labels, train_ratio, num_splits):      
         """
         Parameters
         ----------
