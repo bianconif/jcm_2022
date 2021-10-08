@@ -15,7 +15,8 @@ def _shuffle(x):
 
 def get_accuracy(descriptor, descriptor_name, classifier, classifier_name,
                  dataset_folder, dataset_name, feature_cache, 
-                 classification_cache, splits_cache, train_ratio, num_splits):
+                 classification_cache, splits_cache, train_ratio, num_splits,
+                 in_class_label = 'Normal'):
     """Read/estimate the accuracy of a combination feature/classifier on a 
     given dataset
     
@@ -44,6 +45,8 @@ def get_accuracy(descriptor, descriptor_name, classifier, classifier_name,
         The fraction of normal samples used to train the classifier.
     num_splits: int
         The number of train/test splits
+    in_class_label: str
+        The label used to identify the in-class (normal) samples.
     
     Returns
     -------
@@ -51,13 +54,14 @@ def get_accuracy(descriptor, descriptor_name, classifier, classifier_name,
         The accuracy for each split.
     """
     
-    accuracy = np.empty((0,0), dtype=np.float)
+    accuracy = np.empty((0), dtype=np.float)
     
     #Check if the results are already stored; if so then read them, otherwise
     #compute
     source = f'{classification_cache}/{dataset_name}--{descriptor_name}--{classifier_name}.csv'
     try:
         df = pd.read_csv(source)
+        accuracy = df.to_numpy()
     except FileNotFoundError:
             
         splits_generator = SplitsGenerator(cache = f'{splits_cache}/{dataset_name}.csv')
@@ -91,17 +95,20 @@ def get_accuracy(descriptor, descriptor_name, classifier, classifier_name,
             classifier.train(positive_patterns = features[train_indices_s,:])
             
             #Predict the response and compute the accuracy
-            target_labels = labels[test_indices_s]
-            predicted_labels = classifier.predict(features[test_indices_s,:])
-            acc = np.sum(target_labels == predicted_labels)/len(target_labels)
-            accuracy.append(acc)
+            ground_truth = np.zeros((len(test_indices_s)),dtype=np.int)
+            ground_truth[labels[test_indices_s] == in_class_label] = 1
+            predicted = np.zeros(len(ground_truth),dtype=np.int)
+            predicted[classifier.predict(features[test_indices_s,:])] = 1
+            
+            acc = np.sum(ground_truth == predicted)/len(ground_truth)
+            accuracy = np.append(accuracy, acc)
 
         #--------------------------------------------------------------------
         
         #Save the results
         df = pd.DataFrame(data = accuracy)
         df.to_csv(source, index = False)
-        
+              
     return accuracy
 
 class SplitsGenerator():

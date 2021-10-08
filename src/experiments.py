@@ -1,5 +1,6 @@
 """Main script"""
 import os
+import numpy as np
 
 from cenotaph.classification.one_class import SVDD
 from cenotaph.colour.colour_descriptors import Percentiles
@@ -33,7 +34,7 @@ for dir_ in dirs:
 
 descriptors = {'Percentiles': Percentiles()}
 classifiers = {'SVDD': SVDD()}
-datasets = ['Concrete-01', 'Paper-01']
+datasets = ['Paper-01', 'Paper-02']
 
 for dataset in datasets:
     
@@ -48,6 +49,7 @@ for dataset in datasets:
                              feature_cache = feature_cache, 
                              classification_cache = classification_cache,
                              splits_cache = splits_cache,
-                             train_ratio = train_ratio, num_splits = num_splits)        
-        
-
+                             train_ratio = train_ratio, num_splits = num_splits) 
+            
+            print(f'Avg accuracy of {descriptor_name}/{classifier_name} on '
+                  f'{dataset} = {100*np.mean(accuracy):4.2f}')
