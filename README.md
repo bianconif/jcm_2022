@@ -14,7 +14,7 @@ _Under construction_
 - Dataset 'Concrete' sourced from the [Surface Crack Detection Dataset](https://www.kaggle.com/arunrk7/surface-crack-detection)
 
 ## License
-Distributed under Creative Commons Attribution 4.0 International ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))
+The code in this repository is distributed under [GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/); all the other material under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/)
 
 ## Disclaimer
 The information and content available on this repository are provided with no warranty whatsoever. Any use for scientific or any other purpose is conducted at your own risk and under your own responsibility. The authors are not liable for any damages - including any consequential damages - of any kind that may result from the use of the materials or information available on this repository or of any of the products or services hereon described.
