@@ -1,11 +1,16 @@
 """Main script"""
 import os
 import numpy as np
+import tensorflow as tf
 
-from cenotaph.classification.one_class import SVDD
+from cenotaph.classification.one_class import NND, SVDD
 from cenotaph.colour.colour_descriptors import Percentiles
+from cenotaph.cnn import ResNet50
 
 from functions import get_accuracy
+
+#This is to avoid memory errors with convnets
+os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 #Base folder for the image datasets
 data_folder = '../data/images'
@@ -32,9 +37,10 @@ for dir_ in dirs:
     if not os.path.isdir(dir_):
         os.makedirs(dir_)
 
-descriptors = {'Percentiles': Percentiles()}
-classifiers = {'SVDD': SVDD()}
-datasets = ['Paper-01', 'Paper-02']
+descriptors = {'Percentiles': Percentiles(),
+               'ResNet-50': ResNet50()}
+classifiers = {'1-NN': NND()}
+datasets = ['Paper-01', 'Paper-02', 'Paper-03']
 
 for dataset in datasets:
     
