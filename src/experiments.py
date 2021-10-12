@@ -1,10 +1,11 @@
 """Main script"""
 import os
+import pandas as pd
 import numpy as np
-import tensorflow as tf
+from tabulate import tabulate
 
-from cenotaph.classification.one_class import NND, SVDD
-from cenotaph.colour.colour_descriptors import Percentiles
+from cenotaph.classification.one_class import NND, NNPC
+from cenotaph.colour.colour_descriptors import FullHist, Percentiles
 from cenotaph.cnn import ResNet50
 
 from functions import get_accuracy
@@ -37,17 +38,23 @@ for dir_ in dirs:
     if not os.path.isdir(dir_):
         os.makedirs(dir_)
 
-descriptors = {'Percentiles': Percentiles(),
+descriptors = {'ColourHist': FullHist(nbins = 10),
+               'Percentiles': Percentiles(),
                'ResNet-50': ResNet50()}
-classifiers = {'1-NN': NND()}
-datasets = ['Paper-01', 'Paper-02', 'Paper-03']
+classifiers = {'1-NN': NND(), 'NNPC': NNPC()}
+datasets = ['Concrete-01', 'Fabric-01', 'Paper-01', 'Paper-02', 'Paper-03']
 
-for dataset in datasets:
+for classifier_name, classifier in classifiers.items():
     
-    source_folder = f'{data_folder}/{dataset}'
+    df = pd.DataFrame()
     
-    for descriptor_name, descriptor in descriptors.items():
-        for classifier_name, classifier in classifiers.items():
+    for dataset in datasets:
+    
+        source_folder = f'{data_folder}/{dataset}'
+        
+        record = dict()
+    
+        for descriptor_name, descriptor in descriptors.items():     
             accuracy =\
                 get_accuracy(descriptor = descriptor, descriptor_name = descriptor_name, 
                              classifier = classifier, classifier_name = classifier_name,
@@ -57,5 +64,17 @@ for dataset in datasets:
                              splits_cache = splits_cache,
                              train_ratio = train_ratio, num_splits = num_splits) 
             
+            avg_acc = 100*np.mean(accuracy)
             print(f'Avg accuracy of {descriptor_name}/{classifier_name} on '
-                  f'{dataset} = {100*np.mean(accuracy):4.2f}')
+                  f'{dataset} = {avg_acc:4.2f}')
+            
+            record.update({'Feature': descriptor_name,
+                           'Dataset': dataset,
+                           'Accuracy': avg_acc})
+            
+            df = df.append(record, ignore_index=True)
+    
+    print(f'Classifier: {classifier_name}')
+    print(tabulate(df))
+            
+            
