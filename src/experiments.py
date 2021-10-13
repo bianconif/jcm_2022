@@ -26,6 +26,9 @@ splits_cache = f'{cache_folder}/splits'
 #Cache folder where to store the classification results
 classification_cache = f'{cache_folder}/classification'
 
+#Folder where to store the results ion LaTeX form
+latex_folder = 'LaTeX'
+
 #Fraction of normal samples used for training the classifier
 train_ratio = 0.5
 
@@ -33,7 +36,7 @@ train_ratio = 0.5
 num_splits = 10
 
 #Create the cache folders if they do not exist
-dirs = [classification_cache, feature_cache, splits_cache]
+dirs = [classification_cache, feature_cache, splits_cache, latex_folder]
 for dir_ in dirs:
     if not os.path.isdir(dir_):
         os.makedirs(dir_)
@@ -41,6 +44,8 @@ for dir_ in dirs:
 descriptors = {'ColourHist': FullHist(nbins = 10),
                'Percentiles': Percentiles(),
                'ResNet-50': ResNet50()}
+descriptors = {'ColourHist': FullHist(nbins = 10),
+               'Percentiles': Percentiles()}
 classifiers = {'1-NN': NND(), 'NNPC': NNPC()}
 datasets = ['Concrete-01', 'Fabric-01', 'Paper-01', 'Paper-02', 'Paper-03']
 
@@ -76,5 +81,26 @@ for classifier_name, classifier in classifiers.items():
     
     print(f'Classifier: {classifier_name}')
     print(tabulate(df))
+    
+    #---------- Store the results in a LaTeX table ----------
+    latex_dest = f'{latex_folder}/{classifier_name}.tex'
+    with open(latex_dest, 'w') as fp:
+        #Header 
+        cols = (['c']*(len(datasets) + 1))
+        cols = ''.join(cols)
+        fp.write(f'\\begin{{tabular}}{{{cols}}}')
+        fp.write(f'\\toprule')
+        fp.write('Descriptor ')
+        offset = ord('A')
+        
+        for d, _ in enumerate(descriptors.keys()):
+            fp.write(f'& {chr(offset + d)}', end = '')
+        fp.write('\\\\')
+        fp.write(f'\\midrule')
+        
+        #Footer
+        fp.write(f'\\bottomrule')
+        fp.write(f'\\end{{tabular}}')
+    #--------------------------------------------------------
             
             
