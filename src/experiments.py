@@ -44,8 +44,6 @@ for dir_ in dirs:
 descriptors = {'ColourHist': FullHist(nbins = 10),
                'Percentiles': Percentiles(),
                'ResNet-50': ResNet50()}
-descriptors = {'ColourHist': FullHist(nbins = 10),
-               'Percentiles': Percentiles()}
 classifiers = {'1-NN': NND(), 'NNPC': NNPC()}
 datasets = ['Concrete-01', 'Fabric-01', 'Paper-01', 'Paper-02', 'Paper-03']
 
@@ -75,7 +73,7 @@ for classifier_name, classifier in classifiers.items():
             
             record.update({'Feature': descriptor_name,
                            'Dataset': dataset,
-                           'Accuracy': avg_acc})
+                           'Accuracy (mean)': avg_acc})
             
             df = df.append(record, ignore_index=True)
     
@@ -88,19 +86,31 @@ for classifier_name, classifier in classifiers.items():
         #Header 
         cols = (['c']*(len(datasets) + 1))
         cols = ''.join(cols)
-        fp.write(f'\\begin{{tabular}}{{{cols}}}')
-        fp.write(f'\\toprule')
-        fp.write('Descriptor ')
+        fp.write(f'\\begin{{tabular}}{{{cols}}}\n')
+        fp.write(f'\\toprule\n')
+        fp.write(f'& \\multicolumn{{{len(datasets)}}}{{c}}{{Datasets}}\\\\')
+        fp.write('Descriptor')
         offset = ord('A')
         
-        for d, _ in enumerate(descriptors.keys()):
-            fp.write(f'& {chr(offset + d)}', end = '')
-        fp.write('\\\\')
-        fp.write(f'\\midrule')
+        str_ = str()
+        for d, _ in enumerate(datasets):
+            fp.write(f' & {chr(offset + d)}')
+        fp.write('\\\\\n')
+        fp.write(f'\\midrule\n')
+        
+        #Records
+        for descriptor_name in descriptors.keys():
+            fp.write(f'{descriptor_name}')
+            for dataset in datasets:
+                acc = df.loc[(df['Feature'] == descriptor_name) &
+                             (df['Dataset'] == dataset)]['Accuracy (mean)']
+                acc = acc.tolist()[0]
+                fp.write(f' & {acc:3.1f}')
+            fp.write('\\\\\n')
         
         #Footer
-        fp.write(f'\\bottomrule')
-        fp.write(f'\\end{{tabular}}')
+        fp.write(f'\\bottomrule\n')
+        fp.write(f'\\end{{tabular}}\n')
     #--------------------------------------------------------
             
             
