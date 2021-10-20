@@ -6,7 +6,9 @@ from tabulate import tabulate
 
 from cenotaph.classification.one_class import NND, NNPC
 from cenotaph.colour.colour_descriptors import FullHist, Percentiles
-from cenotaph.cnn import ResNet50
+from cenotaph.texture.hep.greyscale import LBP
+from cenotaph.texture.hep.colour import OCLBP
+#from cenotaph.cnn import ResNet50
 
 from functions import get_accuracy
 
@@ -41,9 +43,14 @@ for dir_ in dirs:
     if not os.path.isdir(dir_):
         os.makedirs(dir_)
 
+#descriptors = {'ColourHist': FullHist(nbins = 10),
+               #'Percentiles': Percentiles(),
+               #'LBP': LBP(),
+               #'ResNet-50': ResNet50()}
 descriptors = {'ColourHist': FullHist(nbins = 10),
                'Percentiles': Percentiles(),
-               'ResNet-50': ResNet50()}
+               'OCLBP': OCLBP(),
+               'LBP': LBP()}
 classifiers = {'1-NN': NND(), 'NNPC': NNPC()}
 datasets = ['Concrete-01', 'Fabric-01', 'Paper-01', 'Paper-02', 'Paper-03']
 
