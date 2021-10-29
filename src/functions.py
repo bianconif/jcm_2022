@@ -16,7 +16,7 @@ def _shuffle(x):
 def get_accuracy(descriptor, descriptor_name, classifier, classifier_name,
                  dataset_folder, dataset_name, feature_cache, 
                  classification_cache, splits_cache, train_ratio, num_splits,
-                 in_class_label = 'Normal'):
+                 in_class_label = 'Normal', verbose=False):
     """Read/estimate the accuracy of a combination feature/classifier on a 
     given dataset
     
@@ -47,6 +47,8 @@ def get_accuracy(descriptor, descriptor_name, classifier, classifier_name,
         The number of train/test splits
     in_class_label: str
         The label used to identify the in-class (normal) samples.
+    verbose: bool
+        Verbose output.
     
     Returns
     -------
@@ -92,7 +94,7 @@ def get_accuracy(descriptor, descriptor_name, classifier, classifier_name,
             test_indices_s = np.array(list(test_indices_s), dtype=np.int)            
             
             #Train the classifier
-            classifier.train(positive_patterns = features[train_indices_s,:])
+            classifier.train(inlier_patterns = features[train_indices_s,:])
             
             #Predict the response and compute the accuracy
             ground_truth = np.zeros((len(test_indices_s)),dtype=np.int)
@@ -396,6 +398,8 @@ class FeatureCalculator():
             #Compute the features for each image
             images = get_files_in_folder(f'{self._source_folder}/{sub_folder}')
             for image in images:
+                
+                print(f'Computing features: {image}')
                 
                 #Compute and append the feature vector
                 fvector = self._image_descriptor.get_features(Image(image))

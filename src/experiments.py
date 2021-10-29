@@ -4,11 +4,13 @@ import pandas as pd
 import numpy as np
 from tabulate import tabulate
 
-from cenotaph.classification.one_class import NND, NNPC
-from cenotaph.colour.colour_descriptors import FullHist, Percentiles
-from cenotaph.texture.hep.greyscale import LBP
+from cenotaph.basics.base_classes import Ensemble
+from cenotaph.classification.one_class import EllipticEnvelope, NND, SVM
+from cenotaph.colour.colour_descriptors import FullHist, MarginalHists
+from cenotaph.texture.hep.greyscale import ILBP, LBP
 from cenotaph.texture.hep.colour import OCLBP
-#from cenotaph.cnn import ResNet50
+from cenotaph.texture.filtering import Gabor
+from cenotaph.cnn import MobileNet, ResNet50
 
 from functions import get_accuracy
 
@@ -21,9 +23,7 @@ data_folder = '../data/images'
 #Cache folder where to store image features and splits
 cache_folder = '../cache'
 feature_cache = f'{cache_folder}/features'
-
-#Cache folder where to store the train/test splits
-splits_cache = f'{cache_folder}/splits'
+hep_luts = f'{cache_folder}/hep-luts'
 
 #Cache folder where to store the classification results
 classification_cache = f'{cache_folder}/classification'
@@ -35,10 +35,14 @@ latex_folder = 'LaTeX'
 train_ratio = 0.5
 
 #Number of train/test splits
-num_splits = 10
+num_splits = 50
+
+#Cache folder where to store the train/test splits
+splits_cache = f'{cache_folder}/splits/{num_splits}'
 
 #Create the cache folders if they do not exist
-dirs = [classification_cache, feature_cache, splits_cache, latex_folder]
+dirs = [classification_cache, feature_cache, splits_cache, latex_folder,
+        hep_luts]
 for dir_ in dirs:
     if not os.path.isdir(dir_):
         os.makedirs(dir_)
@@ -47,12 +51,34 @@ for dir_ in dirs:
                #'Percentiles': Percentiles(),
                #'LBP': LBP(),
                #'ResNet-50': ResNet50()}
-descriptors = {'ColourHist': FullHist(nbins = 10),
-               'Percentiles': Percentiles(),
-               'OCLBP': OCLBP(),
-               'LBP': LBP()}
-classifiers = {'1-NN': NND(), 'NNPC': NNPC()}
-datasets = ['Concrete-01', 'Fabric-01', 'Paper-01', 'Paper-02', 'Paper-03']
+
+#Common settings for LBP-like descriptors
+lbp_common_settings = {'num_peripheral_points': 8, 'group_action': 'C',
+                       'cache_folder': hep_luts}      
+               
+traditional_descriptors =\
+    {'FullColHist': FullHist(nbins = 10),
+     'MargColHists': MarginalHists(nbins = (256, 256, 256)),
+     'Gabor': Gabor(size = 6),
+     'LBP': Ensemble(image_descriptors=
+                     [LBP(radius=1, **lbp_common_settings),
+                      LBP(radius=2, **lbp_common_settings),
+                      LBP(radius=3, **lbp_common_settings)]),
+     'ILBP': Ensemble(image_descriptors=
+                     [ILBP(radius=1, **lbp_common_settings),
+                      ILBP(radius=2, **lbp_common_settings),
+                      ILBP(radius=3, **lbp_common_settings)]),      
+     'OCLBP': Ensemble(image_descriptors=
+                     [OCLBP(radius=1, **lbp_common_settings),
+                      OCLBP(radius=2, **lbp_common_settings),
+                      OCLBP(radius=3, **lbp_common_settings)])
+     }
+cnns = {'MobileNet': MobileNet(), 'ResNet-50': ResNet50()}
+descriptors = {**traditional_descriptors, **cnns}
+
+classifiers = {'3-NN': NND(k = 3)}
+datasets = ['Carpet-01', 'Concrete-01', 'Fabric-01', 'Fabric-02', 'Layered-01',
+            'Leather-01', 'Paper-01', 'Paper-02', 'Wood-01']
 
 for classifier_name, classifier in classifiers.items():
     
@@ -100,8 +126,12 @@ for classifier_name, classifier in classifiers.items():
         offset = ord('A')
         
         str_ = str()
-        for d, _ in enumerate(datasets):
-            fp.write(f' & {chr(offset + d)}')
+        #for d, _ in enumerate(datasets):
+            #fp.write(f' & {chr(offset + d)}')
+            
+        for dataset in datasets:
+            fp.write(f' & {dataset}')        
+        
         fp.write('\\\\\n')
         fp.write(f'\\midrule\n')
         
