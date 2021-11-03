@@ -19,7 +19,7 @@ The images used in this study are stored in the `data/images` folder. For each d
   - Rossi, A., Moretti, M., Senin, N. [Layer inspection via digital imaging and machine learning for in-process monitoring of fused filament fabrication](https://doi.org/10.1016/j.jmapro.2021.08.057) (2021) Journal of Manufacturing Processes, 70, pp. 438-451.
 - Datasets `Paper-01` and `Paper-02` sourced from [PIPED: Paper ImPuritiEs Dataset](https://github.com/bianconif/PIPED). Reference paper:
   - Bianconi, F., Ceccarelli, L., Fernández, A., Saetta, S.A.; [A sequential machine vision procedure for assessing paper impurities](https://doi.org/10.1016/j.compind.2013.12.001) (2014) Computers in Industry, 65 (2), pp. 325-332.
-- Datasets `Leather-01`, `Tile-01` and `Wood-01` sourced from [MVTEC Anomaly detection dataset](https://www.mvtec.com/company/research/datasets/mvtec-ad)
+- Datasets `Carpet-01`, `Leather-01` and `Wood-01` sourced from [MVTEC Anomaly detection dataset](https://www.mvtec.com/company/research/datasets/mvtec-ad)
 
 Please consider citing the sources and related papers - whenever appropriate - if you wish to use any of the above datasets for your research activity.
 
