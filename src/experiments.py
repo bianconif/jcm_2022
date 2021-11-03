@@ -8,9 +8,9 @@ from cenotaph.basics.base_classes import Ensemble
 from cenotaph.classification.one_class import EllipticEnvelope, NND, SVM
 from cenotaph.colour.colour_descriptors import FullHist, MarginalHists
 from cenotaph.texture.hep.greyscale import ILBP, LBP
-from cenotaph.texture.hep.colour import OCLBP
+from cenotaph.texture.hep.colour import OCLBP, IOCLBP
 from cenotaph.texture.filtering import Gabor
-from cenotaph.cnn import MobileNet, ResNet50
+from cenotaph.cnn import DenseNet121, MobileNet, ResNet50, VGG16, Xception
 
 from functions import get_accuracy
 
@@ -71,9 +71,17 @@ traditional_descriptors =\
      'OCLBP': Ensemble(image_descriptors=
                      [OCLBP(radius=1, **lbp_common_settings),
                       OCLBP(radius=2, **lbp_common_settings),
-                      OCLBP(radius=3, **lbp_common_settings)])
+                      OCLBP(radius=3, **lbp_common_settings)]),
+     'IOCLBP': Ensemble(image_descriptors=
+                     [IOCLBP(radius=1, **lbp_common_settings),
+                      IOCLBP(radius=2, **lbp_common_settings),
+                      IOCLBP(radius=3, **lbp_common_settings)])     
      }
-cnns = {'MobileNet': MobileNet(), 'ResNet-50': ResNet50()}
+cnns = {'DenseNet-121': DenseNet121(), 
+        'MobileNet': MobileNet(), 
+        'VGG16': VGG16(),
+        'ResNet-50': ResNet50(),
+        'Xception': Xception()}
 descriptors = {**traditional_descriptors, **cnns}
 
 classifiers = {'3-NN': NND(k = 3)}
@@ -130,7 +138,7 @@ for classifier_name, classifier in classifiers.items():
             #fp.write(f' & {chr(offset + d)}')
             
         for dataset in datasets:
-            fp.write(f' & {dataset}')        
+            fp.write(f' & \\rotatebox{{90}}{{{dataset}}}')        
         
         fp.write('\\\\\n')
         fp.write(f'\\midrule\n')
