@@ -4,10 +4,15 @@ This repository contains the data and code required to reproduce the results pre
 __A benchmark of traditional visual descriptors and convolutional networks 'off-the-shelf' for anomaly detection__, to be submitted to the International Joint Conference on Mechanics, Design Engineering and Advanced Manufacturing ([JCM 2022](https://www.associazioneadm.it/jcm2022/index.php), June 01-03, 2022 - Ischia, Italy)
 
 ## Usage
-_Under construction_
+1. Execute the `experiments.py` script
+2. Retrieve the results in LaTeX tabular form in the `output/LaTeX` folder
 
 ## Dependencies
-_Under construction_
+- [CenOTAPH v0.1.0-alpha](https://github.com/bianconif/CenOTAPH)
+- [Numpy 1.19.1](https://numpy.org/)
+- [Pandas 1.0.5](https://pandas.pydata.org/)
+- [Python 3.8.6](https://www.python.org/)
+- [Tabulate 0.8.9](https://pypi.org/project/tabulate/)
 
 ## Datasets
 The images used in this study are stored in the `data/images` folder. For each dataset the `./Normal` and `./Abnormal` sub-folders respectively contain the normal (non-defective) and abnormal (defective) samples.
@@ -21,7 +26,7 @@ The images used in this study are stored in the `data/images` folder. For each d
   - Bianconi, F., Ceccarelli, L., Fernández, A., Saetta, S.A.; [A sequential machine vision procedure for assessing paper impurities](https://doi.org/10.1016/j.compind.2013.12.001) (2014) Computers in Industry, 65 (2), pp. 325-332.
 - Datasets `Carpet-01`, `Leather-01` and `Wood-01` sourced from [MVTEC Anomaly detection dataset](https://www.mvtec.com/company/research/datasets/mvtec-ad)
 
-Please consider citing the sources and related papers - whenever appropriate - if you wish to use any of the above datasets for your research activity.
+Please consider citing the sources and the related papers - whenever appropriate - if you wish to use any of the above datasets for your research activity.
 
 ## License
 The code in this repository is distributed under [GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/); all the other material under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
