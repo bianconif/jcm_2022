@@ -19,7 +19,8 @@ The images used in this study are stored in the `data/images` folder. For each d
 
 ## Credits
 - Dataset `Concrete-01` sourced from the [Surface Crack Detection Dataset](https://www.kaggle.com/arunrk7/surface-crack-detection).
-- Datasets `Fabric-01` and `Fabric-02` sourced from the [ZJU-Leaper Dataset](https://github.com/nico-zck/ZJU-Leaper-Dataset).
+- Datasets `Fabric-01` and `Fabric-02` sourced from the [ZJU-Leaper Dataset](https://github.com/nico-zck/ZJU-Leaper-Dataset). Reference paper:
+  - Zhang, C., Feng, S., Wang, X., Wang, Y. [ZJU-Leaper} A Benchmark Dataset for Fabric Defect Detection and a Comparative Study](https://doi.org/10.1109/TAI.2021.3057027) (2020) IEEE Transactions on Artificial Intelligence 1 (3), pp. 219-232   
 - Dataset `Layered-01` first released here. Reference paper:
   - Rossi, A., Moretti, M., Senin, N. [Layer inspection via digital imaging and machine learning for in-process monitoring of fused filament fabrication](https://doi.org/10.1016/j.jmapro.2021.08.057) (2021) Journal of Manufacturing Processes, 70, pp. 438-451.
 - Datasets `Paper-01` and `Paper-02` sourced from [PIPED: Paper ImPuritiEs Dataset](https://github.com/bianconif/PIPED). Reference paper:
