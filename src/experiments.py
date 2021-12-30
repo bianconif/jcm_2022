@@ -47,11 +47,6 @@ for dir_ in dirs:
     if not os.path.isdir(dir_):
         os.makedirs(dir_)
 
-#descriptors = {'ColourHist': FullHist(nbins = 10),
-               #'Percentiles': Percentiles(),
-               #'LBP': LBP(),
-               #'ResNet-50': ResNet50()}
-
 #Common settings for LBP-like descriptors
 lbp_common_settings = {'num_peripheral_points': 8, 'group_action': 'C',
                        'cache_folder': hep_luts}      

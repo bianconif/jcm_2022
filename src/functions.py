@@ -1,5 +1,4 @@
 from math import comb
-import os
 import pandas as pd
 
 import numpy as np

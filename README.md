@@ -24,9 +24,11 @@ The images used in this study are stored in the `data/images` folder. For each d
   - Rossi, A., Moretti, M., Senin, N. [Layer inspection via digital imaging and machine learning for in-process monitoring of fused filament fabrication](https://doi.org/10.1016/j.jmapro.2021.08.057) (2021) Journal of Manufacturing Processes, 70, pp. 438-451.
 - Datasets `Paper-01` and `Paper-02` sourced from [PIPED: Paper ImPuritiEs Dataset](https://github.com/bianconif/PIPED). Reference paper:
   - Bianconi, F., Ceccarelli, L., Fernández, A., Saetta, S.A.; [A sequential machine vision procedure for assessing paper impurities](https://doi.org/10.1016/j.compind.2013.12.001) (2014) Computers in Industry, 65 (2), pp. 325-332.
-- Datasets `Carpet-01`, `Leather-01` and `Wood-01` sourced from [MVTEC Anomaly detection dataset](https://www.mvtec.com/company/research/datasets/mvtec-ad)
+- Datasets `Carpet-01`, `Leather-01` and `Wood-01` sourced from [MVTEC Anomaly detection dataset](https://www.mvtec.com/company/research/datasets/mvtec-ad). Reference papers:
+  - Bergmann, P., Batzner, K., Fauser, M., Sattlegger, D., Steger, C. [The MVTec Anomaly Detection Dataset: A Comprehensive Real-World Dataset for Unsupervised Anomaly Detection](https://doi.org/10.1007/s11263-020-01400-4) (2021) International Journal of Computer Vision, 129 (4), pp. 1038-1059.
+  - Bergmann, P., Fauser, M., Sattlegger, D., Steger, C. [MVTEC ad-A comprehensive real-world dataset for unsupervised anomaly detection](https://doi.org/10.1109/CVPR.2019.00982) (2019) Proceedings of the IEEE Computer Society Conference on Computer Vision and Pattern Recognition, 2019-June, art. no. 8954181, pp. 9584-9592.
 
-Please consider citing the sources and the related papers - whenever appropriate - if you wish to use any of the above datasets for your research activity.
+Please consider citing the sources and the related papers - whenever appropriate - if you wish to use any of the above datasets for your research.
 
 ## License
 The code in this repository is distributed under [GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/); all the other material under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
