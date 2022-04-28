@@ -1,7 +1,7 @@
 ## Description
 This repository contains the data and code required to reproduce the results presented in the following paper:
 
-__A benchmark of traditional visual descriptors and convolutional networks 'off-the-shelf' for anomaly detection__, to be submitted to the International Joint Conference on Mechanics, Design Engineering and Advanced Manufacturing ([JCM 2022](https://www.associazioneadm.it/jcm2022/index.php), June 01-03, 2022 - Ischia, Italy)
+__A benchmark of traditional visual descriptors and convolutional networks 'off-the-shelf' for anomaly detection__, accepted for oral presentation at the International Joint Conference on Mechanics, Design Engineering and Advanced Manufacturing ([JCM 2022](https://www.associazioneadm.it/jcm2022/index.php), June 01-03, 2022 - Ischia, Italy)
 
 ## Usage
 1. Execute the `experiments.py` script
